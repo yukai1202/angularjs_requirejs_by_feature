@@ -2,7 +2,8 @@ module.exports = function(grunt) {
     var libs = [
         'bower_components/angular/angular.min.js',
         'bower_components/angular-ui-router/release/angular-ui-router.min.js',
-        'bower_components/requirejs/require.js'
+        'bower_components/requirejs/require.js',
+        'bower_components/bootstrap/dist/css/bootstrap.min.css'
     ];
     // Project configuration.
     grunt.initConfig({
@@ -40,7 +41,7 @@ module.exports = function(grunt) {
             //all: ['grunt.js', 'src/*.js'],
             //deploy: ['dist/demoApp.js'],
             options: {
-                curly: true, //大括号包裹，即不能使用这种代码：
+                curly: true, //大括号包裹
                 eqeqeq: true, // 对于简单类型，使用===和!==，而不是==和!=
                 newcap: true, //对于首字母大写的函数（声明的类），强制使用new
                 noarg: true, //禁用arguments.caller和arguments.callee
@@ -89,7 +90,51 @@ module.exports = function(grunt) {
                     {expand:true, src:libs, dest: 'build/'}
                 ]
             }
+        },
+
+        image: {
+          static: {
+            options: {
+              pngquant: true,
+              optipng: false,
+              zopflipng: true,
+              advpng: true,
+              jpegRecompress: false,
+              jpegoptim: true,
+              mozjpeg: true,
+              gifsicle: true,
+              svgo: true
+            },
+            files: {
+              'build/assets/image/a.jpg': 'assets/image/a.jpg',
+              'build/assets/image/b.jpg': 'assets/image/b.jpg' 
+            }
+          },
+          dynamic: {
+            files: [{
+              expand: true,
+              cwd: 'assets/image/',
+              src: ['*.{png,jpg,gif,svg}'],
+              dest: 'build/assets/image/'
+            }]
+          }
+        },
+
+        cssmin: {
+          
+          target: {
+            files: [{
+                expand: true,
+                cwd: 'assets/css',
+                src: ['*.css', '!*.min.css'],
+                dest: 'build/assets/css/'
+            }]
+          }
+        },
+        clean: {
+          build: ["build/"] 
         }
+
     });
 
     grunt.loadNpmTasks('grunt-contrib-uglify');
@@ -97,10 +142,13 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-contrib-jshint');
     grunt.loadNpmTasks('grunt-contrib-requirejs');
     grunt.loadNpmTasks('grunt-contrib-copy');
+    grunt.loadNpmTasks('grunt-image');
+    grunt.loadNpmTasks('grunt-contrib-cssmin');
+    grunt.loadNpmTasks('grunt-contrib-clean');
     // this would be run by typing "grunt test" on the command line
     //grunt.registerTask('test', ['jshint', 'qunit']);
 
     // Default task(s).
-    grunt.registerTask('default', [ 'concat', 'uglify']);
-    grunt.registerTask('prod', [ 'requirejs:prod', 'copy']);
+    grunt.registerTask('default', ['concat', 'uglify']);
+    grunt.registerTask('prod', [ 'clean','requirejs:prod', 'copy','image','cssmin']);
 };

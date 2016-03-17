@@ -28,6 +28,12 @@
                             controller: ['$scope', '$stateParams',
                                 function ($scope, $stateParams) {
                                     $scope.id = $stateParams.id;
+                                    if($scope.id == 1){
+                                        $scope.src="a.jpg";
+                                    } else {
+                                        $scope.src="b.jpg";
+                                    }
+
                                 }]
                         }
                     }
